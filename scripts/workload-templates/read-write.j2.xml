@@ -1,0 +1,18 @@
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<workload name="{{obj_size}}{{obj_size_dim}}-obj-read-write-test" description="Random read and serial write {{obj_size}}{{obj_size_dim}} objects">
+    <storage type="librados" config="endpoint={{mon_ip}};accesskey={{access_key}};secretkey={{secret_key}}" />
+    <workflow>
+{% for stage in stages %}
+        <workstage name="{{stage.name}}">
+            <work name="{{stage.name}}" type="normal" division="object" workers="{{stage.threads}}" interval="5" rampup="60" runtime="300" rampdown="30">
+                <operation type="write" ratio="{{stage.write_ratio}}" config="cprefix={{pool_base_name}};containers=c({{pool_name_suffix}});oprefix={{write_obj_prefix}};objects=s(1,{{write_obj_max_num}});sizes=c({{obj_size_in_b}})B" />
+                <operation type="read" ratio="{{stage.read_ratio}}" config="cprefix={{pool_base_name}};containers=c({{pool_name_suffix}});oprefix={{read_obj_prefix}};objects=s(1,{{read_obj_max_num}})" />
+            </work>
+        </workstage>
+        <workstage name="{{stage.name}}-cleanup">
+            <work type="cleanup" workers="128" config="cprefix={{pool_base_name}};containers=r({{pool_name_suffix}},{{pool_name_suffix}});oprefix={{write_obj_prefix}};objects=r(1,{{write_obj_max_num}})" />
+        </workstage>
+{% endfor %}
+    </workflow>
+</workload>

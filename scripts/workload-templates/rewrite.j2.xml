@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<workload name="{{obj_size}}{{obj_size_dim}}-obj-rewrite-test" description="Rewrite {{obj_size}}{{obj_size_dim}} objects">
+    <storage type="librados" config="endpoint={{mon_ip}};accesskey={{access_key}};secretkey={{secret_key}}" />
+    <workflow>
+{% for stage in stages %}
+        <workstage name="{{stage.name}}">
+            <work name="{{stage.name}}" type="normal" workers="{{stage.threads}}" interval="5" division="object" rampup="60" runtime="300" rampdown="30">
+                <operation type="write" config="cprefix={{pool_base_name}};containers=c({{pool_name_suffix}});oprefix={{obj_prefix}};objects=s(1,{{obj_max_num}});sizes=c({{obj_size_in_b}})B" />
+            </work>
+        </workstage>
+{% endfor %}
+    </workflow>
+</workload>

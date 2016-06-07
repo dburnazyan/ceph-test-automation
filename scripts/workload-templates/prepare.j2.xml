@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<workload name="{{obj_size}}{{obj_size_dim}}-obj-prepare" description="Preapare {{obj_size}}{{obj_size_dim}} objects">
+    <storage type="librados" config="endpoint={{mon_ip}};accesskey={{access_key}};secretkey={{secret_key}}" />
+    <workflow>
+        <workstage name="{{obj_size}}{{obj_size_dim}}-obj-prepare">
+            <work type="prepare" workers="100" config="cprefix={{pool_base_name}};containers=r({{pool_name_suffix}},{{pool_name_suffix}});oprefix={{obj_prefix}};objects=r(1,{{obj_max_num}});sizes=c({{obj_size_in_b}})B" />
+        </workstage>
+    </workflow>
+</workload>

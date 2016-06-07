@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<workload name="read-write-ceph-test" description="Workload for read and write test for Ceph">
+    <storage type="librados" config="endpoint=${MON_IP};accesskey=${ACCESS_KEY};secretkey=${SECRET_KEY}" />
+    <workflow>
+        <workstage name="main">
+            <work name="main" type="normal" workers="${THREADS}" interval="${INTERVAL}" totalOps="${TOTAL_OPS}">
+                <operation type="write" ratio="80" config="cprefix=${POOL_BASE_NAME};containers=c(${POOL_NAME_SUFFIX});objects=s(${MIN_OPS_NUM_FOR_WRITE},${MAX_OPS_NUM_FOR_WRITE});sizes=c(${OBJ_SIZE_IN_BYTES})B" />
+                <operation type="read" ratio="20" config="cprefix=${POOL_BASE_NAME};containers=c(${POOL_NAME_SUFFIX});objects=s(${MIN_OPS_NUM_FOR_READ},${MAX_OPS_NUM_FOR_READ})" />
+            </work>
+        </workstage>
+    </workflow>
+</workload>
